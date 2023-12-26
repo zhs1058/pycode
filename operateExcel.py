@@ -1,6 +1,5 @@
 import openpyxl
-import pandas as pd
-from decimal import Decimal, getcontext
+from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill, Border, Side, numbers
 # 原始表和最终表银行名称对照字典
 bank_name_map = {"东城区支行": "东城", "西城区支行": "西城", "金融大街支行": "金融街", "朝阳区支行": "朝阳",
                  "望京支行": "望京", "海淀区支行": "海淀", "中关村支行": "中关村", "丰台区支行": "丰台",
@@ -663,9 +662,159 @@ def count_total_3(sheet_now, sheet_pre, sheet_person_now, sheet_person_pre):
     return result_item
 
 
+# 设置列宽
+def set_excel_col_width(worksheet):
+    for i in range(1,80):
+        if i == 39 or i == 44 or i ==53:
+            worksheet.column_dimensions[openpyxl.utils.get_column_letter(i)].width = 36
+        elif i == 79:
+            worksheet.column_dimensions[openpyxl.utils.get_column_letter(i)].width = 54
+        else:
+            worksheet.column_dimensions[openpyxl.utils.get_column_letter(i)].width = 18
 
 
 
+
+
+# 设置表头格式
+def set_excel_head_1_style(worksheet):
+    # 表头第一行合并范围
+    merge_row_1 = [(1, 1, 79, 1)]
+    start_col = 1
+    start_row = 1
+    end_col = 79
+    end_row = 1
+    merge_range_str = f'{openpyxl.utils.get_column_letter(start_col)}{start_row}:{openpyxl.utils.get_column_letter(end_col)}{end_row}'
+    worksheet.merge_cells(merge_range_str)
+    # 设置第一行样式
+    font_row_1 = Font(name="宋体", size=20)
+    alignment_row_1 = Alignment(vertical="center", horizontal="center", wrap_text=True)
+    worksheet.cell(1, 1).font = font_row_1
+    worksheet.cell(1, 1).alignment = alignment_row_1
+    worksheet.cell(1, 1, '成本支出情况表')
+
+
+# 设置表头第二行
+def set_excel_head_2_style(worksheet):
+    font_row_1 = Font(name="宋体", size=12)
+    alignment_row_1 = Alignment(vertical="center", horizontal="left", wrap_text=True)
+    worksheet.cell(2, 78).font = font_row_1
+    worksheet.cell(2, 78).alignment = alignment_row_1
+    worksheet.column_dimensions[openpyxl.utils.get_column_letter(78)].width = 18
+    worksheet.cell(2, 78, '单位：万元')
+
+
+# 设置表头第四行格式
+def set_excel_head_4_style(worksheet):
+    font_row = Font(name="宋体", size=12)
+    alignment_row = Alignment(vertical="center", horizontal="center", wrap_text=True)
+    # fill = PatternFill(fill_type="solid", fgColor="808080")
+    border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"),
+                    bottom=Side(style="thin"))
+    # 表头合并范围
+    # (start_col, start_row, end_col, end_row)
+
+    for i in range(1,80):
+        worksheet.cell(4, i).border = border
+
+    value_dict = {2: "业务及管理费", 6: "职工工资", 12: "正式工人数", 15: "劳务工人数", 18: "劳务性支出", 22: "社保、住房公积金", 26: "工会经费+教育经费", 30: "福利费", 35: "宣传费", 40: "房租相关费用", 45: "物业费", 50: "水电取暖费", 55: "钞币运送费", 60: "代理公司存款营销费", 65: "折旧费及摊销", 70: "外包费", 75: "其他项目"}
+    merge_row_list = [(2, 4, 5, 4), (6, 4, 11, 4), (12, 4, 14, 4), (15, 4, 17, 4), (18, 4, 21, 4), (22, 4, 25, 4), (26, 4, 29, 4), (30, 4, 34, 4), (35, 4, 39, 4), (40, 4, 44, 4), (45, 4, 49, 4), (50, 4, 54, 4), (55, 4, 59, 4), (60, 4, 64, 4), (65, 4, 69, 4), (70, 4, 74, 4), (75, 4, 78, 4)]
+    for merge_range in merge_row_list:
+        start_col, start_row, end_col, end_row = merge_range
+        merge_range_str = f'{openpyxl.utils.get_column_letter(start_col)}{start_row}:{openpyxl.utils.get_column_letter(end_col)}{end_row}'
+        worksheet.merge_cells(merge_range_str)
+        worksheet.cell(4, start_col).font = font_row
+        worksheet.cell(4, start_col).alignment = alignment_row
+        worksheet.cell(4, start_col, value_dict.get(start_col))
+
+    worksheet.cell(4, 1).font = font_row
+    worksheet.cell(4, 1).alignment = alignment_row
+    worksheet.cell(4, 1, "项目")
+    worksheet.cell(4, 79).font = font_row
+    worksheet.cell(4, 79).alignment = alignment_row
+    worksheet.cell(4, 79, "备注其他情况")
+
+    worksheet.row_dimensions[4].height = 30
+
+
+#  设置第五行格式
+def set_excel_head_5_style(worksheet):
+    font_row = Font(name="宋体", size=12)
+    alignment_row = Alignment(vertical="center", horizontal="center", wrap_text=True)
+    # fill = PatternFill(fill_type="solid", fgColor="808080")
+    border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"),
+                    bottom=Side(style="thin"))
+    col_1 = "202311"
+    col_2 = "202211"
+    col_3 = "同比增加"
+    col_4 = "同比增幅"
+    data_to_insert = ['单位', col_1, col_2, col_3, col_4, col_1, col_2, col_3, col_4, '绩效考核结果', '备注原因', col_1,
+                      col_2, col_3, col_1, col_2, col_3,
+                      col_1, col_2, col_3, col_4, col_1, col_2, col_3, col_4, col_1, col_2, col_3, col_4, col_1, col_2,
+                      col_3, col_4, '备注',
+                      col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3,
+                      col_4, '备注',
+                      col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3,
+                      col_4, '备注',
+                      col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3, col_4, '备注', col_1, col_2, col_3,
+                      col_4, ]
+    worksheet.append(data_to_insert)
+    # 表头合并范围
+    # (start_col, start_row, end_col, end_row)
+
+    for i in range(1, 80):
+        worksheet.cell(5, i).font = font_row
+        worksheet.cell(5, i).alignment = alignment_row
+        worksheet.cell(5, i).border = border
+
+    worksheet.row_dimensions[5].height = 30
+    merge_range_str = f'{openpyxl.utils.get_column_letter(79)}{4}:{openpyxl.utils.get_column_letter(79)}{5}'
+    worksheet.merge_cells(merge_range_str)
+
+
+
+def set_excel_data(worksheet, data):
+    dataLength = len(data)
+    print('我的长度',dataLength)
+    font_row = Font(name="宋体", size=12)
+    alignment_row = Alignment(vertical="center", horizontal="center", wrap_text=True)
+    # fill = PatternFill(fill_type="solid", fgColor="808080")
+    border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"),
+                    bottom=Side(style="thin"))
+    for item in data:
+        worksheet.append(item)
+
+    number_format_style = NamedStyle(name='number_format_style', number_format=numbers.FORMAT_NUMBER_COMMA_SEPARATED1)
+    percent_format_style = NamedStyle(name='percent_format_style', number_format=numbers.FORMAT_PERCENTAGE_00)
+    percent_list = [5, 9, 21, 25, 29, 33, 38, 43, 48, 53, 58, 63, 68, 73, 78]
+    number_list = [12, 13, 14, 15, 16, 17]
+    for i in range(6, dataLength + 6):
+        worksheet.row_dimensions[i].height = 90
+        for j in range(1, 80):
+            if j in percent_list:
+                worksheet.cell(i, j).style = percent_format_style
+            elif j not in number_list:
+                worksheet.cell(i, j).style = number_format_style
+            worksheet.cell(i, j).font = font_row
+            worksheet.cell(i, j).alignment = alignment_row
+            worksheet.cell(i, j).border = border
+
+
+
+# 设置excel表格式
+def set_excel_style(output_file_path, data):
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.create_sheet("支出明细表", index=0)
+
+    set_excel_col_width(worksheet)
+    set_excel_head_1_style(worksheet)
+    set_excel_head_2_style(worksheet)
+    set_excel_head_4_style(worksheet)
+    set_excel_head_5_style(worksheet)
+    set_excel_data(worksheet, data)
+
+
+    workbook.save(output_file_path)
 
 
 
@@ -696,7 +845,8 @@ if __name__ == "__main__":
 
 
     # 输出文件路径（新的Excel表格）
-    output_file_path = "D:/RPATestDocumet/file.xlsx"
+    output_file_path = "D:/RPATestDocumet/text.xlsx"
+
     result = []
     for key, value in bank_name_map.items():
         result_item = []
@@ -724,14 +874,15 @@ if __name__ == "__main__":
         other_pre = 0.0
 
         result.append(result_item)
-        print(result_item)
     list2 = count_total_2(sheet_now, sheet_pre, sheet_person_now, sheet_person_pre)
     list3 = count_total_3(sheet_now, sheet_pre, sheet_person_now, sheet_person_pre)
     list1 = count_total_1(list2, list3)
-    print(list1)
-    print(list2)
-    print(list3)
 
+    result.append(list1)
+    result.append(list2)
+    result.append(list3)
+
+    set_excel_style(output_file_path, result)
 
     # 关闭Excel文件
     wb_now.close()
