@@ -2,7 +2,8 @@ import sys
 import openpyxl
 from openpyxl.styles import NamedStyle, Font, Alignment, Border, Side, numbers
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, ttk
+from ttkbootstrap import Style
 
 
 class honmeDialog:
@@ -14,13 +15,16 @@ class honmeDialog:
         self.root.title("选择文件")
         self.root.geometry("600x500+500+100")
 
+        style = Style(theme='litera')
+
+
         self.tip = tk.Label(self.root, wraplength="400", text="", fg="red", font=("宋体", 15))
         self.tip.place(x=50, y=10)
         self.msg = tk.Label(self.root, wraplength="400", text="", fg="green", font=("宋体", 15))
         self.msg.place(x=90, y=30)
 
         # 暂估应付款
-        tk.Label(self.root, text="暂估应付款：", font=("宋体", 15)).place(x=90, y=148)
+        ttk.Label(self.root, text="暂估应付款：", font=("宋体", 15)).place(x=90, y=148)
         self.select_button = tk.Button(self.root, text="选择", width="10", font=("宋体", 15), command=self.on_select_1)
         self.select_button.place(x=330, y=147)
 
