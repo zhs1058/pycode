@@ -1,6 +1,6 @@
 import sys
 import openpyxl
-from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill, Border, Side, numbers
+from openpyxl.styles import NamedStyle, Font, Alignment, Border, Side, numbers
 import tkinter as tk
 from tkinter import filedialog
 
