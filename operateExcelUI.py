@@ -88,7 +88,7 @@ class honmeDialog:
         if(self.filePath_2 == ""):
             self.tip.config(text=f"请选择同期支出明细原表")
             return
-        if self.user_entry_now.get() == "":
+        if self.user_entry_pre.get() == "":
             self.tip.config(text=f"请填写同期日期")
             return
         if(self.filePath_3 == ""):
@@ -102,7 +102,7 @@ class honmeDialog:
             return
         self.tip.config(text=f"")
         self.msg.config(text=f"开始执行,请稍后...")
-        self.do_excel(self.filePath_1, self.filePath_2, self.filePath_3, self.filePath_4, self.user_entry_now.get(), self.user_entry_now.get())
+        self.do_excel(self.filePath_1, self.filePath_2, self.filePath_3, self.filePath_4, self.user_entry_now.get(), self.user_entry_pre.get())
         self.resultFlag = True
         self.on_close()
 
