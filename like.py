@@ -20,7 +20,7 @@ message = "宝子喜欢哥子嘛？"
 text_label = tk.Label(root, text=message, padx=20, pady=20)
 text_label.pack()
 
-# 函数：显示图片
+# 函数：显示图片  pyinstaller --onefile --noconsole --add-data "images;images" main.py
 def show_image(image_path):
     image = Image.open(image_path)
     photo = ImageTk.PhotoImage(image)
